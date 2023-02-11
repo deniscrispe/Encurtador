@@ -1,0 +1,44 @@
+version: '3.9'
+networks:
+  app-tier:
+    driver: bridge
+services:
+    db:
+        image: mysql:8.0.32
+        ports:
+            - "3306:3306"
+            - "33060-33060"
+        networks:
+            - app-tier     
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_USER: admin
+            MYSQL_PASSWORD: admin
+            MYSQL_DATABASE: encurtador
+            MYSQL_ROOT_HOST: '%'
+        volumes:
+            - db-volume:/var/lib/mysql
+    backend:
+        depends_on:
+            - db
+        build:
+            context: backend
+            dockerfile: Dockerfile
+            # Only will build development stage from our dockerfile
+            target: development
+        volumes:
+            - ./backend:/usr/src/app
+            - /usr/src/app/node_modules
+        #env_file:
+           #- .env
+        # Run a command against the development stage of the image
+        # command: /bin/bash -c 'while !</dev/tcp/db/3306; do sleep 1; done; npm run start:dev'
+        #command: ./wait-for-it.sh db:3306 -- npm run start:dev
+        command: npm run start:dev
+        ports:
+            - "3000:3000"
+        networks:
+            - app-tier     
+    
+volumes:
+    db-volume:    
