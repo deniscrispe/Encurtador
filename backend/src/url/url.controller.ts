@@ -3,7 +3,7 @@ import { Url } from './entities/url.entity';
 import { UrlService } from './url.service';
 import { CreateUrlDto } from './dto/create-url.dto';
 import { UpdateUrlDto } from './dto/update-url.dto';
-import { ApiOkResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags, ApiExtraModels, ApiBody, getSchemaPath } from '@nestjs/swagger';
 
 @ApiTags('Url')
 @Controller('url')
@@ -11,6 +11,12 @@ export class UrlController {
   constructor(private readonly urlService: UrlService) {}
 
   @Post()
+  @ApiOperation({ summary: 'Endpoint para buscar URL pelo código' })
+  @ApiResponse({ 
+    status: 201, 
+    description: 'URL criada com sucesso',
+    schema: { $ref: getSchemaPath(Url) }, 
+  })
   create(@Body() createUrlDto: CreateUrlDto) {
     return this.urlService.create(createUrlDto);
   }
@@ -19,44 +25,44 @@ export class UrlController {
   @ApiOperation({ summary: 'Endpoint para listar todas as URLs cadastradas' })
   @ApiResponse({ 
     status: 200, 
-    description: 'Lista com JSONs de todas URLs cadastradas', 
-    type: Url,
+    description: 'OK', 
+    schema: { $ref: getSchemaPath(Url) },
     isArray: true 
   })
   findAll() {
     return this.urlService.findAll();
   }
 
-  @Get(':id')
-  @ApiOperation({ summary: 'Endpoint para buscar URL por id' })
+  @Get(':code')
+  @ApiOperation({ summary: 'Endpoint para buscar URL pelo código' })
   @ApiResponse({ 
     status: 200, 
-    description: 'JSON com informações da URL encontrada', 
+    description: 'OK', 
     type: Url 
   })
-  findOne(@Param('id') id: string) {
-    return this.urlService.findOne(+id);
+  findOne(@Param('code') code: string) {
+    return this.urlService.findOne(code);
   }
 
-  @ApiOperation({ summary: 'Endpoint para atualizar URL por id' })
+  @ApiOperation({ summary: 'Endpoint para atualizar URL pelo código' })
   @ApiResponse({ 
     status: 200, 
-    description: 'JSON com informações da URL atualizada', 
+    description: 'OK', 
     type: Url 
   })
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUrlDto: UpdateUrlDto) {
-    return this.urlService.update(+id, updateUrlDto);
+  @Patch(':code')
+  update(@Param('code') code: string, @Body() updateUrlDto: UpdateUrlDto) {
+    return this.urlService.update(code, updateUrlDto);
   }
 
-  @ApiOperation({ summary: 'Endpoint para deletar URL por id' })
+  @ApiOperation({ summary: 'Endpoint para deletar URL pelo código' })
   @ApiResponse({ 
     status: 200, 
     description: 'Ok', 
     type: Url 
   })
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.urlService.remove(+id);
+  @Delete(':code')
+  remove(@Param('code') code: string) {
+    return this.urlService.remove(code);
   }
 }
