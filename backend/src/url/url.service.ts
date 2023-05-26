@@ -12,23 +12,26 @@ export class UrlService {
   ) {}
 
   create(createUrlDto: CreateUrlDto) {
-    return 'This action adds a new url';
+    return this.urlRepository.create({
+      url: createUrlDto.url,
+      code: this.generateCode()
+    });
   }
 
   async findAll() {
     return this.urlRepository.findAll<Url>();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} url`;
+  findOne(code: string) {
+    return this.urlRepository.findOne({ where: { code: code } })
   }
 
-  update(id: number, updateUrlDto: UpdateUrlDto) {
-    return `This action updates a #${id} url`;
+  update(code: string, updateUrlDto: UpdateUrlDto) {
+    return this.urlRepository.update( updateUrlDto, {where: { code: code }})
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} url`;
+  remove(code: string) {
+    return this.urlRepository.destroy({ where: { code: code } });
   }
 
   generateCode() {
