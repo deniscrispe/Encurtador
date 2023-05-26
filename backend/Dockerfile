@@ -1,10 +1,8 @@
-FROM node:12.13 As development
+FROM node:14.17.6 As development
 
 WORKDIR /usr/src/app
 
 COPY package*.json ./
-
-COPY ../scripts/wait-for-it.sh ./
 
 RUN npm install --only=development
 
@@ -14,7 +12,7 @@ RUN npm run build
 
 #RUN /bin/sh -c "apk add --no-cache bash"
 
-FROM node:12.13 as production
+FROM node:14.17.6 as production
 
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
